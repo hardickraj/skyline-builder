@@ -1,11 +1,13 @@
 const canvas = document.getElementById('kaplay-canvas');
+let isFirstFloor = true;
+let GAME_SPEED = 700;
 
 const k = kaplay({
   canvas: canvas,
   // debug: false
 });
 
-k.setGravity(1400);
+// k.setGravity(1400);
 
 const canvasWidth = k.width();
 const canvasHeight = k.height();
@@ -34,26 +36,27 @@ k.scene('game', async () => {
     k.anchor('bot'),
     k.area({ shape: new k.Rect(k.vec2(0, -290), 180, 100) }),
     k.scale(),
-    k.body({ isStatic: true }),
-    k.offscreen({ hide: true }),
-    k.animate(),
     k.timer(),
     'base',
   ]);
   base.scaleTo(canvasWidth / base.width);
 
+  let floorNumber = 1;
   k.onClick(() => {
-    console.log('Canvas clicked!');
     const floor = k.add([
-      k.sprite(`floor${Math.floor(Math.random() * 2) + 1}`),
+      k.sprite(`floor${floorNumber}`),
       k.pos(canvasWidth / 2, 0),
       k.anchor('center'),
       k.area(),
-      k.scale(),
-      k.body(),
       k.offscreen({ hide: true, pause: true }),
       'floor',
     ]);
+    floorNumber++;
+    if (floorNumber === 3) floorNumber = 1;
+
+    floor.onUpdate(() => {
+      floor.move(0, GAME_SPEED);
+    });
   });
 
   function moveDown() {
@@ -67,30 +70,32 @@ k.scene('game', async () => {
     });
   }
 
-  k.onCollide('floor', 'base', (floor, base) => {
-    // if (!floor.isStatic) {
-    //   floor.body.isStatic = true; // Stabilize the floor
-    // }
-    moveDown();
+  base.onCollide('floor', (floor) => {
+    floor.destroy();
+    if (isFirstFloor) {
+      isFirstFloor = false;
+      base.add([
+        k.sprite(floor.sprite),
+        k.pos(0, -390),
+        k.anchor('bot'),
+        k.area(),
+        k.scale(1 + canvasWidth / base.width / 2),
+        'fake-floor',
+      ]);
+      // moveDown();
+    }
   });
 
-  k.onCollide('floor', 'floor', (floor1, floor2) => {
+  k.onCollide('fake-floor', 'floor', (fakeFloor, floor) => {
     moveDown();
-    // floor1.add([
-    //   k.sprite(floor2.sprite),
-    //   k.pos(0, 0),
-    //   k.anchor('center'),
-    //   k.area(),
-    //   k.offscreen({ hide: true, pause: true }),
-    //   'floor',
-    // ]);
-    // floor1.destroy();
-    // floor1.move(0, 0); // Stop movement
-    // floor1.drag(10);
-    // floor1.addForce(k.vec2(0, 0));
-    console.log(floor1);
-
-    // floor1.body.isStatic = true; // Make floor static
+    floor.destroy();
+    fakeFloor.add([
+      k.sprite(floor.sprite),
+      k.pos(0, -fakeFloor.height),
+      k.anchor('bot'),
+      k.area(),
+      'fake-floor',
+    ]);
   });
 });
 
