@@ -22,6 +22,9 @@ k.scene('game', async () => {
   await k.loadSprite('base', '/assets/images/base-0.png');
   await k.loadSprite('floor1', '/assets/images/floor-1.png');
   await k.loadSprite('floor2', '/assets/images/floor-2.png');
+  await k.loadSprite('hook', '/assets/images/hook.png');
+
+  // ADDING BG, BASE, CRANE HOOK
 
   const background = k.add([
     k.rect(canvasWidth, canvasHeight),
@@ -41,23 +44,83 @@ k.scene('game', async () => {
   ]);
   base.scaleTo(canvasWidth / base.width);
 
-  let floorNumber = 1;
-  k.onClick(() => {
-    const floor = k.add([
-      k.sprite(`floor${floorNumber}`),
-      k.pos(canvasWidth / 2, 0),
-      k.anchor('center'),
-      k.area(),
-      k.offscreen({ hide: true, pause: true }),
-      'floor',
-    ]);
-    floorNumber++;
-    if (floorNumber === 3) floorNumber = 1;
+  const hook = k.add([
+    // k.rect(50, 50),
+    k.sprite('hook'),
+    // k.color(255, 0, 0),
+    k.pos(canvasWidth / 2, 0),
+    k.anchor('top'),
+    k.area(),
+    k.animate(),
+    k.timer(),
+    'hook',
+  ]);
 
-    floor.onUpdate(() => {
-      floor.move(0, GAME_SPEED);
-    });
+  // adding floor to hook
+  let floorNumber = 1;
+
+  const fakeFloor = k.make([
+    k.sprite(`floor${floorNumber}`),
+    k.pos(0, hook.height),
+    k.anchor('top'),
+    k.area(),
+  ]);
+
+  hook.add(fakeFloor);
+
+  // CLICK LOGIC
+  let isHookAnimating = false;
+  k.onClick(() => {
+    if (isHookAnimating) return;
+
+    if (fakeFloor.parent) {
+      isHookAnimating = true;
+      const globalPos = fakeFloor.worldPos();
+
+      hook.tween(
+        vec2(hook.pos.x, hook.pos.y),
+        vec2(hook.pos.x, -hook.height),
+        0.25,
+        (value) => (hook.pos = value)
+      );
+
+      fakeFloor.destroy();
+
+      const floor = k.add([
+        k.sprite(`floor${floorNumber}`),
+        k.pos(globalPos.x, globalPos.y),
+        k.anchor('top'),
+        k.area(),
+        k.offscreen({ hide: true, pause: true }),
+        'floor',
+      ]);
+      floorNumber++;
+      if (floorNumber === 3) floorNumber = 1;
+
+      floor.onUpdate(() => {
+        floor.move(0, GAME_SPEED);
+      });
+    }
+
+    if (!fakeFloor.parent) {
+      isHookAnimating = true;
+      k.wait(1.1, () => {
+        hook.tween(
+          vec2(hook.pos.x, hook.pos.y),
+          vec2(hook.pos.x, 0),
+          0.25,
+          (value) => (hook.pos = value)
+        );
+        hook.add(fakeFloor);
+
+        k.wait(0.25, () => {
+          isHookAnimating = false;
+        });
+      });
+    }
   });
+
+  // MOVE DOWN METHOD
 
   function moveDown() {
     base.wait(0.5, () => {
@@ -69,6 +132,8 @@ k.scene('game', async () => {
       );
     });
   }
+
+  // COLLIDE LOGICS
 
   base.onCollide('floor', (floor) => {
     floor.destroy();
