@@ -1,6 +1,7 @@
 const canvas = document.getElementById('kaplay-canvas');
 let isFirstFloor = true;
 let GAME_SPEED = 700;
+let FLOOR_COUNT = 0;
 
 const k = kaplay({
   canvas: canvas,
@@ -68,9 +69,22 @@ k.scene('game', async () => {
 
   hook.add(fakeFloor);
 
-  // CLICK LOGIC
+  // MOVE DOWN METHOD
+
+  function moveDown() {
+    base.wait(0.5, () => {
+      base.tween(
+        vec2(base.pos.x, base.pos.y),
+        vec2(base.pos.x, base.pos.y + 100),
+        0.6,
+        (value) => (base.pos = value)
+      );
+    });
+  }
+
+  // CLICK AND SPACE BAR LOGIC
   let isHookAnimating = false;
-  k.onClick(() => {
+  const releaseFloor = () => {
     if (isHookAnimating) return;
 
     if (fakeFloor.parent) {
@@ -118,20 +132,16 @@ k.scene('game', async () => {
         });
       });
     }
+  };
+
+  k.onClick(() => {
+    releaseFloor();
   });
-
-  // MOVE DOWN METHOD
-
-  function moveDown() {
-    base.wait(0.5, () => {
-      base.tween(
-        vec2(base.pos.x, base.pos.y),
-        vec2(base.pos.x, base.pos.y + 100),
-        0.6,
-        (value) => (base.pos = value)
-      );
-    });
-  }
+  k.onKeyDown((key) => {
+    if (key === 'space') {
+      releaseFloor();
+    }
+  });
 
   // COLLIDE LOGICS
 
@@ -147,6 +157,9 @@ k.scene('game', async () => {
         k.scale(1 + canvasWidth / base.width / 2),
         'fake-floor',
       ]);
+      FLOOR_COUNT++;
+      k.debug.log(`Floor count: ${FLOOR_COUNT}`);
+
       // moveDown();
     }
   });
@@ -161,6 +174,9 @@ k.scene('game', async () => {
       k.area(),
       'fake-floor',
     ]);
+
+    FLOOR_COUNT++;
+    k.debug.log(`Floor count: ${FLOOR_COUNT}`);
   });
 });
 
