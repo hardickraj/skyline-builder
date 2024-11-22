@@ -1,0 +1,4 @@
+- gradient background
+- change gradient bg after some floors
+- pulley
+- pulley motion
