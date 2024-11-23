@@ -4,6 +4,7 @@ let GAME_SPEED = 50;
 let ROTATION_SPEED = GAME_SPEED / 50;
 let MAX_ROTATION = 45;
 let FLOOR_COUNT = 0;
+let SCORE = 0;
 
 const k = kaplay({
   canvas: canvas,
@@ -92,15 +93,19 @@ k.scene('game', async () => {
       if (hook.angle > MAX_ROTATION) hookDirection = -1;
       if (hook.angle < -MAX_ROTATION) hookDirection = 1;
       hook.angle += hookDirection * ROTATION_SPEED;
+      // if (fakeFloor.parent) {
+      //   fakeFloor.angle = -hook.angle / 2;
+      // }
       hook.move(-hookDirection * GAME_SPEED, 0);
     });
   }
 
-  // animateHook();
-
   // CLICK AND SPACE BAR LOGIC
+
   let isHookAnimating = false;
   const releaseFloor = () => {
+    if (isFirstFloor) animateHook();
+
     if (isHookAnimating) return;
 
     if (fakeFloor.parent) {
@@ -152,7 +157,7 @@ k.scene('game', async () => {
 
   k.onClick(() => {
     releaseFloor();
-    if (isFirstFloor) animateHook();
+    console.log(FLOOR_COUNT % 5, GAME_SPEED);
   });
   k.onKeyDown((key) => {
     if (key === 'space') {
@@ -180,24 +185,54 @@ k.scene('game', async () => {
   });
 
   k.onCollide('fake-floor', 'floor', (fakeFloor, floor, col) => {
-    const globalPos = fakeFloor.worldPos();
-    const attachmentPos = col.target.pos.x - globalPos.x;
+    const fakeFloorPos = fakeFloor.worldPos();
+    const attachmentPos = col.target.pos.x - fakeFloorPos.x;
+
     floor.destroy();
+
     if (Math.abs(attachmentPos) <= fakeFloor.width / 2) {
-      moveDown();
-      fakeFloor.add([
+      const newFloor = fakeFloor.add([
         k.sprite(floor.sprite),
         k.pos(attachmentPos, -fakeFloor.height),
         k.anchor('bot'),
+        k.color(),
         k.area(),
         'fake-floor',
       ]);
 
+      // LOGICS IF ATTACHMENT POSITION IS VERY CLOSE
+      if (Math.abs(attachmentPos) <= 5) {
+        newFloor.color = k.rgb('#ffd52d');
+        SCORE += 25;
+      } else {
+        SCORE += 10;
+      }
+
       FLOOR_COUNT++;
       k.debug.log(`Floor count: ${FLOOR_COUNT}`);
+      k.debug.log(`Score: ${SCORE}`);
+
+      moveDown();
       return;
     }
-    k.addKaboom(col.target.pos);
+
+    // CREATING FALLING FLOOR IF OUT OF ATTACHMENT POSITION
+    const fallingFloor = k.add([
+      k.sprite(floor.sprite),
+      k.pos(col.target.pos.x, col.target.pos.y + floor.height),
+      k.anchor('bot'),
+      k.rotate(),
+      k.timer(),
+      k.offscreen({ destroy: true }),
+      'falling-floor',
+    ]);
+
+    fallingFloor.onUpdate(() => {
+      fallingFloor.angle += attachmentPos >= 0 ? 3 : -3;
+      fallingFloor.wait(0.2, () => {
+        fallingFloor.move(0, 750);
+      });
+    });
   });
 });
 

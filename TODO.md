@@ -1,4 +1,10 @@
 - gradient background
 - change gradient bg after some floors
-- pulley
-- pulley motion
+- ~~pulley~~
+- ~~pulley motion~~
+- ~~floor attached to pulley should not rotate~~
+- ~~floor falls if not attached~~
+- ~~not attached floor destroys after offscreen~~
+- ~~turn yellow if almost perfect aligns~~
+- add SFX 
+- add objects
