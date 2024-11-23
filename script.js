@@ -1,11 +1,10 @@
 const canvas = document.getElementById('kaplay-canvas');
 let isFirstFloor = true;
-let GAME_SPEED = 50;
-let ROTATION_SPEED = GAME_SPEED / 50;
-let MAX_ROTATION = 45;
+let GAME_SPEED = 200;
+let ROTATION_SPEED = GAME_SPEED / 150;
+let MAX_ROTATION = GAME_SPEED / 10;
 let FLOOR_COUNT = 0;
 let SCORE = 0;
-
 const k = kaplay({
   canvas: canvas,
   // debug: false
@@ -85,28 +84,42 @@ k.scene('game', async () => {
   }
 
   // ANIMATING THE HOOK
-
-  function animateHook() {
+  const animateHook = () => {
     let hookDirection = 1;
+    // hook.onUpdate(() => {
+    //   if (hook.pos.x <= 0 - fakeFloor.width / 2 || hook.angle > MAX_ROTATION)
+    //     hookDirection = 1; // Checking if the hook reaches the left side
+    //   if (
+    //     hook.pos.x >= canvasWidth + fakeFloor.width / 2 ||
+    //     hook.angle < -MAX_ROTATION
+    //   )
+    //     hookDirection = -1;
+
+    //   hook.angle += -hookDirection * ROTATION_SPEED; // Rotate the hook
+    //   hook.move(hookDirection * GAME_SPEED, 0); // Move the hook based on the updated speed
+    // });
 
     hook.onUpdate(() => {
-      if (hook.angle > MAX_ROTATION) hookDirection = -1;
-      if (hook.angle < -MAX_ROTATION) hookDirection = 1;
-      hook.angle += hookDirection * ROTATION_SPEED;
-      // if (fakeFloor.parent) {
-      //   fakeFloor.angle = -hook.angle / 2;
-      // }
-      hook.move(-hookDirection * GAME_SPEED, 0);
+      if (hook.pos.x <= 0 - fakeFloor.width) hookDirection = 1; // Checking if the hook reaches the left side
+      if (hook.pos.x >= canvasWidth + fakeFloor.width) hookDirection = -1;
+
+      // hook.angle += -hookDirection * 1); // Rotate the hook
+      hook.move(hookDirection * GAME_SPEED, 0); // Move the hook based on the updated speed
     });
-  }
+  };
 
   // CLICK AND SPACE BAR LOGIC
 
   let isHookAnimating = false;
-  const releaseFloor = () => {
-    if (isFirstFloor) animateHook();
-
+  const clickLogic = () => {
     if (isHookAnimating) return;
+    if (isFirstFloor) animateHook();
+    console.log(GAME_SPEED);
+    if (FLOOR_COUNT % 5 === 4) {
+      GAME_SPEED += 100;
+      // ROTATION_SPEED += 0.3;
+      console.log(GAME_SPEED);
+    }
 
     if (fakeFloor.parent) {
       isHookAnimating = true;
@@ -156,12 +169,11 @@ k.scene('game', async () => {
   };
 
   k.onClick(() => {
-    releaseFloor();
-    console.log(FLOOR_COUNT % 5, GAME_SPEED);
+    clickLogic();
   });
   k.onKeyDown((key) => {
     if (key === 'space') {
-      releaseFloor();
+      clickLogic();
     }
   });
 
