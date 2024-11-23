@@ -48,9 +48,7 @@ k.scene('game', async () => {
   base.scaleTo(canvasWidth / base.width);
 
   const hook = k.add([
-    // k.rect(50, 50),
     k.sprite('hook'),
-    // k.color(255, 0, 0),
     k.pos(canvasWidth / 2, -40),
     k.anchor('top'),
     k.area(),
@@ -98,7 +96,7 @@ k.scene('game', async () => {
     });
   }
 
-  animateHook();
+  // animateHook();
 
   // CLICK AND SPACE BAR LOGIC
   let isHookAnimating = false;
@@ -139,7 +137,7 @@ k.scene('game', async () => {
       k.wait(1.1, () => {
         hook.tween(
           vec2(hook.pos.x, hook.pos.y),
-          vec2(hook.pos.x, 0),
+          vec2(hook.pos.x, -40),
           0.25,
           (value) => (hook.pos = value)
         );
@@ -154,6 +152,7 @@ k.scene('game', async () => {
 
   k.onClick(() => {
     releaseFloor();
+    if (isFirstFloor) animateHook();
   });
   k.onKeyDown((key) => {
     if (key === 'space') {
@@ -177,24 +176,28 @@ k.scene('game', async () => {
       ]);
       FLOOR_COUNT++;
       k.debug.log(`Floor count: ${FLOOR_COUNT}`);
-
-      // moveDown();
     }
   });
 
-  k.onCollide('fake-floor', 'floor', (fakeFloor, floor) => {
-    moveDown();
+  k.onCollide('fake-floor', 'floor', (fakeFloor, floor, col) => {
+    const globalPos = fakeFloor.worldPos();
+    const attachmentPos = col.target.pos.x - globalPos.x;
     floor.destroy();
-    fakeFloor.add([
-      k.sprite(floor.sprite),
-      k.pos(0, -fakeFloor.height),
-      k.anchor('bot'),
-      k.area(),
-      'fake-floor',
-    ]);
+    if (Math.abs(attachmentPos) <= fakeFloor.width / 2) {
+      moveDown();
+      fakeFloor.add([
+        k.sprite(floor.sprite),
+        k.pos(attachmentPos, -fakeFloor.height),
+        k.anchor('bot'),
+        k.area(),
+        'fake-floor',
+      ]);
 
-    FLOOR_COUNT++;
-    k.debug.log(`Floor count: ${FLOOR_COUNT}`);
+      FLOOR_COUNT++;
+      k.debug.log(`Floor count: ${FLOOR_COUNT}`);
+      return;
+    }
+    k.addKaboom(col.target.pos);
   });
 });
 
