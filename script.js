@@ -1,3 +1,5 @@
+import shiftColor from './utils/shiftColor.js';
+
 const canvas = document.getElementById('kaplay-canvas');
 let isFirstFloor = true;
 let GAME_SPEED = 200;
@@ -8,6 +10,7 @@ let SCORE = 0;
 const k = kaplay({
   canvas: canvas,
   // debug: false
+  background: [250, 250, 250],
 });
 
 // k.setGravity(1400);
@@ -27,15 +30,46 @@ k.scene('game', async () => {
   await k.loadSprite('floor2', '/assets/images/floor-2.png');
   await k.loadSprite('hook', '/assets/images/hook.png');
 
-  // ADDING BG, BASE, CRANE HOOK
+  // CREATING GRADIENT BACKGROUND
 
-  const background = k.add([
-    k.rect(canvasWidth, canvasHeight),
-    k.color(220, 240, 255),
-    k.pos(k.center()),
-    k.anchor('center'),
-  ]);
+  const gradientCanvas = document.createElement('canvas');
+  gradientCanvas.width = canvasWidth;
+  gradientCanvas.height = canvasHeight;
 
+  const ctx = gradientCanvas.getContext('2d');
+
+  let bgColorOne = '#FFFAAA';
+  let bgColorTwo = '#96C8CD';
+
+  const drawGradient = () => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvasHeight);
+    gradient.addColorStop(0, bgColorOne);
+    gradient.addColorStop(1, bgColorTwo);
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  };
+
+  drawGradient();
+
+  const loadBackground = () => {
+    const gradientBgDataUrl = gradientCanvas.toDataURL();
+    k.loadSprite('gradientBg', gradientBgDataUrl);
+    const background = k.add([k.sprite('gradientBg'), k.z(0)]);
+  };
+
+  loadBackground();
+
+  // METHOD TO CHANGE GRADIENT COLOR
+
+  const updateBackground = () => {
+    bgColorOne = shiftColor(bgColorOne, 5);
+    bgColorTwo = shiftColor(bgColorTwo, 5);
+    drawGradient();
+    loadBackground();
+  };
+
+  // ADDING BASE, CRANE-HOOK
   const base = k.add([
     k.sprite('base'),
     k.pos(canvasWidth / 2, canvasHeight),
@@ -43,6 +77,7 @@ k.scene('game', async () => {
     k.area({ shape: new k.Rect(k.vec2(0, -290), 180, 100) }),
     k.scale(),
     k.timer(),
+    k.z(10),
     'base',
   ]);
   base.scaleTo(canvasWidth / base.width);
@@ -55,6 +90,7 @@ k.scene('game', async () => {
     k.animate(),
     k.timer(),
     k.rotate(0),
+    k.z(10),
     'hook',
   ]);
 
@@ -66,6 +102,7 @@ k.scene('game', async () => {
     k.pos(0, hook.height),
     k.anchor('top'),
     k.area(),
+    k.z(10),
   ]);
 
   hook.add(fakeFloor);
@@ -140,6 +177,7 @@ k.scene('game', async () => {
         k.anchor('top'),
         k.area(),
         k.offscreen({ hide: true, pause: true }),
+        k.z(10),
         'floor',
       ]);
       floorNumber++;
@@ -189,6 +227,7 @@ k.scene('game', async () => {
         k.anchor('bot'),
         k.area(),
         k.scale(1 + canvasWidth / base.width / 2),
+        k.z(10),
         'fake-floor',
       ]);
       FLOOR_COUNT++;
@@ -209,6 +248,7 @@ k.scene('game', async () => {
         k.anchor('bot'),
         k.color(),
         k.area(),
+        k.z(10),
         'fake-floor',
       ]);
 
@@ -221,6 +261,7 @@ k.scene('game', async () => {
       }
 
       FLOOR_COUNT++;
+      updateBackground();
       k.debug.log(`Floor count: ${FLOOR_COUNT}`);
       k.debug.log(`Score: ${SCORE}`);
 
@@ -236,6 +277,7 @@ k.scene('game', async () => {
       k.rotate(),
       k.timer(),
       k.offscreen({ destroy: true }),
+      k.z(10),
       'falling-floor',
     ]);
 
