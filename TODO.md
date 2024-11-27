@@ -1,10 +1,11 @@
-- gradient background
-- change gradient bg after some floors
-- ~~pulley~~
-- ~~pulley motion~~
-- ~~floor attached to pulley should not rotate~~
-- ~~floor falls if not attached~~
-- ~~not attached floor destroys after offscreen~~
-- ~~turn yellow if almost perfect aligns~~
-- add SFX 
-- add objects
+- start button/ click button
+- add side objects
+- fall if drop outside the canvas
+- lives functionality
+- lives and score UI
+- BGM & SFX
+- Credits Info
+- about this project
+- usage policy & terms
+- logo
+- change assets
