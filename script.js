@@ -2,9 +2,9 @@ import shiftColor from './utils/shiftColor.js';
 
 const canvas = document.getElementById('kaplay-canvas');
 let isFirstFloor = true;
-let GAME_SPEED = 200;
-let ROTATION_SPEED = GAME_SPEED / 150;
-let MAX_ROTATION = GAME_SPEED / 10;
+let GAME_SPEED = 220;
+let ROTATION_SPEED = 1;
+let MAX_ROTATION = 45;
 let FLOOR_COUNT = 0;
 let SCORE = 0;
 const k = kaplay({
@@ -38,8 +38,8 @@ k.scene('game', async () => {
 
   const ctx = gradientCanvas.getContext('2d');
 
-  let bgColorOne = '#FFFAAA';
-  let bgColorTwo = '#96C8CD';
+  let bgColorOne = '#7F7FD5';
+  let bgColorTwo = '#91EAE4';
 
   const drawGradient = () => {
     const gradient = ctx.createLinearGradient(0, 0, 0, canvasHeight);
@@ -123,24 +123,16 @@ k.scene('game', async () => {
   // ANIMATING THE HOOK
   const animateHook = () => {
     let hookDirection = 1;
-    // hook.onUpdate(() => {
-    //   if (hook.pos.x <= 0 - fakeFloor.width / 2 || hook.angle > MAX_ROTATION)
-    //     hookDirection = 1; // Checking if the hook reaches the left side
-    //   if (
-    //     hook.pos.x >= canvasWidth + fakeFloor.width / 2 ||
-    //     hook.angle < -MAX_ROTATION
-    //   )
-    //     hookDirection = -1;
-
-    //   hook.angle += -hookDirection * ROTATION_SPEED; // Rotate the hook
-    //   hook.move(hookDirection * GAME_SPEED, 0); // Move the hook based on the updated speed
-    // });
-
     hook.onUpdate(() => {
-      if (hook.pos.x <= 0 - fakeFloor.width) hookDirection = 1; // Checking if the hook reaches the left side
-      if (hook.pos.x >= canvasWidth + fakeFloor.width) hookDirection = -1;
+      if (hook.pos.x <= 0 - fakeFloor.width / 2 || hook.angle > MAX_ROTATION)
+        hookDirection = 1; // Checking if the hook reaches the left side
+      if (
+        hook.pos.x >= canvasWidth + fakeFloor.width / 2 ||
+        hook.angle < -MAX_ROTATION
+      )
+        hookDirection = -1;
 
-      // hook.angle += -hookDirection * 1); // Rotate the hook
+      hook.angle += -hookDirection * ROTATION_SPEED; // Rotate the hook
       hook.move(hookDirection * GAME_SPEED, 0); // Move the hook based on the updated speed
     });
   };
@@ -148,26 +140,22 @@ k.scene('game', async () => {
   // CLICK AND SPACE BAR LOGIC
 
   let isHookAnimating = false;
+
   const clickLogic = () => {
     if (isHookAnimating) return;
+
     if (isFirstFloor) animateHook();
-    console.log(GAME_SPEED);
-    if (FLOOR_COUNT % 5 === 4) {
-      GAME_SPEED += 100;
-      // ROTATION_SPEED += 0.3;
-      console.log(GAME_SPEED);
-    }
 
     if (fakeFloor.parent) {
       isHookAnimating = true;
       const globalPos = fakeFloor.worldPos();
 
-      hook.tween(
-        vec2(hook.pos.x, hook.pos.y),
-        vec2(hook.pos.x, -hook.height),
-        0.25,
-        (value) => (hook.pos = value)
-      );
+      // hook.tween(
+      //   vec2(hook.pos.x, hook.pos.y),
+      //   vec2(hook.pos.x, -hook.height),
+      //   0.25,
+      //   (value) => (hook.pos = value)
+      // );
 
       fakeFloor.destroy();
 
@@ -191,15 +179,15 @@ k.scene('game', async () => {
     if (!fakeFloor.parent) {
       isHookAnimating = true;
       k.wait(1.1, () => {
-        hook.tween(
-          vec2(hook.pos.x, hook.pos.y),
-          vec2(hook.pos.x, -40),
-          0.25,
-          (value) => (hook.pos = value)
-        );
+        // hook.tween(
+        //   vec2(hook.pos.x, hook.pos.y),
+        //   vec2(hook.pos.x, -40),
+        //   0.4,
+        //   (value) => (hook.pos = value)
+        // );
         hook.add(fakeFloor);
 
-        k.wait(0.25, () => {
+        k.wait(0.41, () => {
           isHookAnimating = false;
         });
       });
@@ -261,11 +249,23 @@ k.scene('game', async () => {
       }
 
       FLOOR_COUNT++;
-      updateBackground();
       k.debug.log(`Floor count: ${FLOOR_COUNT}`);
       k.debug.log(`Score: ${SCORE}`);
 
+      // INCREASING GAME SPEED
+      if (FLOOR_COUNT % 4 === 3) {
+        ROTATION_SPEED += 0.3;
+        MAX_ROTATION = ROTATION_SPEED * 50;
+        GAME_SPEED = ROTATION_SPEED * 220;
+        // console.log(`game speed: ${GAME_SPEED}`);
+        // console.log(`rotation speed: ${ROTATION_SPEED}`);
+        // console.log(`Max rotation: ${MAX_ROTATION}`);
+      }
+
       moveDown();
+      k.wait(1.25, () => {
+        if (!isFirstFloor) updateBackground();
+      });
       return;
     }
 
