@@ -1,6 +1,15 @@
-function shiftColor(hex, degree) {
+function shiftColor(hex, degree, darkenFactor = 0, saturationFactor = 0) {
   const hsl = hexToHsl(hex);
-  hsl.h = (hsl.h + degree) % 360; // Shift the hue
+
+  // Shift the hue
+  hsl.h = (hsl.h + degree) % 360;
+
+  // Darken by reducing the lightness
+  hsl.l = Math.max(0.3, Math.min(1, hsl.l - darkenFactor)); // Ensure lightness stays between 0 and 1
+
+  // Adjust saturation
+  hsl.s = Math.max(0.3, Math.min(0.7, hsl.s + saturationFactor)); // Ensure saturation stays between 0 and 1
+
   return hslToHex(hsl);
 }
 

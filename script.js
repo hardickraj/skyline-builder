@@ -2,7 +2,7 @@ import shiftColor from './utils/shiftColor.js';
 
 const canvas = document.getElementById('kaplay-canvas');
 let isFirstFloor = true;
-let GAME_SPEED = 220;
+let GAME_SPEED = 250;
 let ROTATION_SPEED = 1;
 let MAX_ROTATION = 45;
 let FLOOR_COUNT = 0;
@@ -43,8 +43,8 @@ k.scene('game', async () => {
 
   const ctx = gradientCanvas.getContext('2d');
 
-  let bgColorOne = '#7F7FD5';
-  let bgColorTwo = '#91EAE4';
+  let bgColorOne = '#7bbcff';
+  let bgColorTwo = '#b8fdfd';
 
   const drawGradient = () => {
     const gradient = ctx.createLinearGradient(0, 0, 0, canvasHeight);
@@ -68,8 +68,9 @@ k.scene('game', async () => {
   // METHOD TO CHANGE GRADIENT COLOR
 
   const updateBackground = () => {
-    bgColorOne = shiftColor(bgColorOne, 5);
-    bgColorTwo = shiftColor(bgColorTwo, 5);
+    0.1;
+    bgColorOne = shiftColor(bgColorOne, 2, 0.01, -0.01);
+    bgColorTwo = shiftColor(bgColorTwo, 2, 0.01, -0.01);
     drawGradient();
     loadBackground();
   };
@@ -142,12 +143,14 @@ k.scene('game', async () => {
 
   function moveDown(distance = fakeFloor.height) {
     base.wait(0.5, () => {
-      base.tween(
-        vec2(base.pos.x, base.pos.y),
-        vec2(base.pos.x, base.pos.y + distance),
-        0.6,
-        (value) => (base.pos = value)
-      );
+      base
+        .tween(
+          vec2(base.pos.x, base.pos.y),
+          vec2(base.pos.x, base.pos.y + distance),
+          0.6,
+          (value) => (base.pos = value)
+        )
+        .onEnd(() => updateBackground());
     });
   }
 
@@ -266,8 +269,8 @@ k.scene('game', async () => {
 
     if (
       Math.abs(attachmentPos) <= fakeFloor.width / 2 &&
-      fakeFloorPos.x > 0 &&
-      fakeFloorPos.x < canvasWidth
+      floor.pos.x > 0 &&
+      floor.pos.x < canvasWidth
     ) {
       const newFloor = fakeFloor.add([
         k.sprite(floor.sprite),
@@ -293,18 +296,18 @@ k.scene('game', async () => {
 
       // INCREASING GAME SPEED
       if (FLOOR_COUNT % 4 === 3) {
-        ROTATION_SPEED += 0.3;
-        MAX_ROTATION = ROTATION_SPEED * 50;
-        GAME_SPEED = ROTATION_SPEED * 220;
+        ROTATION_SPEED += 0.4;
+        MAX_ROTATION = ROTATION_SPEED * 45;
+        GAME_SPEED = ROTATION_SPEED * 250;
         // console.log(game speed: ${GAME_SPEED});
         // console.log(rotation speed: ${ROTATION_SPEED});
         // console.log(Max rotation: ${MAX_ROTATION});
       }
 
       moveDown();
-      k.wait(1.25, () => {
-        updateBackground();
-      });
+      // k.wait(1, () => {
+      //   updateBackground();
+      // });
       return;
     }
 
