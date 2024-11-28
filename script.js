@@ -34,6 +34,7 @@ k.scene('game', async () => {
   await k.loadSprite('heart', '/assets/images/heart.svg');
   await k.loadSprite('scoreBox', '/assets/images/score-box.svg');
   await k.loadSprite('floorBox', '/assets/images/floor-box.svg');
+  await k.loadSprite('arrow', '/assets/images/arrow.png');
 
   // CREATING GRADIENT BACKGROUND
 
@@ -69,8 +70,8 @@ k.scene('game', async () => {
 
   const updateBackground = () => {
     0.1;
-    bgColorOne = shiftColor(bgColorOne, 2, 0.01, -0.01);
-    bgColorTwo = shiftColor(bgColorTwo, 2, 0.01, -0.01);
+    bgColorOne = shiftColor(bgColorOne, 2, 0.008, -0.008);
+    bgColorTwo = shiftColor(bgColorTwo, 2, 0.008, -0.008);
     drawGradient();
     loadBackground();
   };
@@ -96,10 +97,69 @@ k.scene('game', async () => {
 
   const startButton = k.add([
     k.sprite('startButton'),
-    k.pos(canvasWidth / 2, canvasHeight / 2 + 100),
+    k.pos(canvasWidth / 2, canvasHeight / 2 + 80),
     k.anchor('center'),
+    k.timer(),
+    k.scale(0.9),
     k.z(50),
   ]);
+
+  const startButtonPos = startButton.worldPos();
+
+  const arrow = k.add([
+    k.sprite('arrow'),
+    k.pos(startButtonPos.x, startButtonPos.y - startButton.height * 1.2),
+    k.anchor('bot'),
+    k.timer(),
+    k.z(50),
+  ]);
+
+  const animateArrow = () => {
+    arrow
+      .tween(
+        arrow.pos.y,
+        arrow.pos.y + 35,
+        0.5,
+        (value) => (arrow.pos.y = value),
+        k.easings.easeInOutSine
+      )
+      .onEnd(() => {
+        arrow
+          .tween(
+            arrow.pos.y,
+            arrow.pos.y - 35,
+            0.5,
+            (value) => (arrow.pos.y = value),
+            k.easings.easeInOutSine
+          )
+          .onEnd(() => animateArrow());
+      });
+  };
+
+  const animateStartButton = () => {
+    startButton
+      .tween(
+        startButton.scale,
+        k.vec2(1, 1),
+        1,
+        (value) => (startButton.scale = value),
+        k.easings.easeInOutSine
+      )
+      .onEnd(() => {
+        startButton
+          .tween(
+            startButton.scale,
+            k.vec2(0.9, 0.9),
+            1,
+            (value) => (startButton.scale = value),
+            k.easings.easeInOutSine
+          )
+          .onEnd(() => animateStartButton());
+      });
+  };
+
+  animateArrow();
+  animateStartButton();
 
   // ADDING BASE, CRANE-HOOK
   const base = k.add([
@@ -180,6 +240,7 @@ k.scene('game', async () => {
 
     if (isFirstFloor) {
       if (startButton.parent) startButton.destroy();
+      if (arrow.parent) arrow.destroy();
       animateHook();
     }
 
