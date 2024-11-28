@@ -7,6 +7,7 @@ let ROTATION_SPEED = 1;
 let MAX_ROTATION = 45;
 let FLOOR_COUNT = 0;
 let SCORE = 0;
+let LIVES = 3;
 const k = kaplay({
   canvas: canvas,
   // debug: false
@@ -29,6 +30,10 @@ k.scene('game', async () => {
   await k.loadSprite('floor1', '/assets/images/floor-1.png');
   await k.loadSprite('floor2', '/assets/images/floor-2.png');
   await k.loadSprite('hook', '/assets/images/hook.png');
+  await k.loadSprite('startButton', '/assets/images/click-button.svg');
+  await k.loadSprite('heart', '/assets/images/heart.svg');
+  await k.loadSprite('scoreBox', '/assets/images/score-box.svg');
+  await k.loadSprite('floorBox', '/assets/images/floor-box.svg');
 
   // CREATING GRADIENT BACKGROUND
 
@@ -69,6 +74,32 @@ k.scene('game', async () => {
     loadBackground();
   };
 
+  // ADDING HUD
+
+  const scoreBoard = k.add([
+    k.sprite('scoreBox'),
+    k.pos(canvasWidth - 140, 4),
+    k.z(50),
+  ]);
+
+  const floorBoard = k.add([k.sprite('floorBox'), k.pos(10, 4), k.z(50)]);
+
+  for (let i = 0; i < LIVES; i++) {
+    scoreBoard.add([
+      k.sprite('heart'),
+      k.pos(5 + i * 42, scoreBoard.height + 10),
+      k.z(80),
+      'heart',
+    ]);
+  }
+
+  const startButton = k.add([
+    k.sprite('startButton'),
+    k.pos(canvasWidth / 2, canvasHeight / 2 + 100),
+    k.anchor('center'),
+    k.z(50),
+  ]);
+
   // ADDING BASE, CRANE-HOOK
   const base = k.add([
     k.sprite('base'),
@@ -84,7 +115,7 @@ k.scene('game', async () => {
 
   const hook = k.add([
     k.sprite('hook'),
-    k.pos(canvasWidth / 2, -40),
+    k.pos(canvasWidth / 2, 0),
     k.anchor('top'),
     k.area(),
     k.animate(),
@@ -144,7 +175,10 @@ k.scene('game', async () => {
   const clickLogic = () => {
     if (isHookAnimating) return;
 
-    if (isFirstFloor) animateHook();
+    if (isFirstFloor) {
+      if (startButton.parent) startButton.destroy();
+      animateHook();
+    }
 
     if (fakeFloor.parent) {
       isHookAnimating = true;
