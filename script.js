@@ -1,8 +1,9 @@
 import shiftColor from './utils/shiftColor.js';
+window.scrollTo(0, -50);
 
 const canvas = document.getElementById('kaplay-canvas');
 let isFirstFloor = true;
-let GAME_SPEED = 250;
+let GAME_SPEED = 220;
 let ROTATION_SPEED = 1;
 let MAX_ROTATION = 45;
 let FLOOR_COUNT = 0;
@@ -12,6 +13,8 @@ const k = kaplay({
   canvas: canvas,
   // debug: false
   background: [250, 250, 250],
+  backgroundAudio: true,
+  focus: false,
 });
 
 // k.setGravity(1400);
@@ -35,6 +38,8 @@ k.scene('game', async () => {
   await k.loadSprite('scoreBox', '/assets/images/score-box.svg');
   await k.loadSprite('floorBox', '/assets/images/floor-box.svg');
   await k.loadSprite('arrow', '/assets/images/arrow.png');
+
+  k.loadSound('bgMusic', '/assets/sounds/bg-music.mp3');
 
   // CREATING GRADIENT BACKGROUND
 
@@ -241,6 +246,10 @@ k.scene('game', async () => {
     if (isFirstFloor) {
       if (startButton.parent) startButton.destroy();
       if (arrow.parent) arrow.destroy();
+      k.play('bgMusic', {
+        volume: 0.3,
+        loop: true,
+      });
       animateHook();
     }
 
@@ -357,9 +366,9 @@ k.scene('game', async () => {
 
       // INCREASING GAME SPEED
       if (FLOOR_COUNT % 4 === 3) {
-        ROTATION_SPEED += 0.4;
+        ROTATION_SPEED += 0.3;
         MAX_ROTATION = ROTATION_SPEED * 45;
-        GAME_SPEED = ROTATION_SPEED * 250;
+        GAME_SPEED = ROTATION_SPEED * 220;
         // console.log(game speed: ${GAME_SPEED});
         // console.log(rotation speed: ${ROTATION_SPEED});
         // console.log(Max rotation: ${MAX_ROTATION});
