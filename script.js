@@ -225,11 +225,18 @@ k.scene('game', async () => {
 
   k.onCollide('fake-floor', 'floor', (fakeFloor, floor, col) => {
     const fakeFloorPos = fakeFloor.worldPos();
+    console.log(fakeFloorPos);
+
     const attachmentPos = col.target.pos.x - fakeFloorPos.x;
 
     floor.destroy();
 
-    if (Math.abs(attachmentPos) <= fakeFloor.width / 2) {
+    if (
+      Math.abs(attachmentPos) <= fakeFloor.width / 2 &&
+      fakeFloorPos.x > 0 &&
+      fakeFloorPos.x < canvasWidth
+    ) {
+      console.log(fakeFloorPos);
       const newFloor = fakeFloor.add([
         k.sprite(floor.sprite),
         k.pos(attachmentPos, -fakeFloor.height),
@@ -257,9 +264,9 @@ k.scene('game', async () => {
         ROTATION_SPEED += 0.3;
         MAX_ROTATION = ROTATION_SPEED * 50;
         GAME_SPEED = ROTATION_SPEED * 220;
-        // console.log(`game speed: ${GAME_SPEED}`);
-        // console.log(`rotation speed: ${ROTATION_SPEED}`);
-        // console.log(`Max rotation: ${MAX_ROTATION}`);
+        // console.log(game speed: ${GAME_SPEED});
+        // console.log(rotation speed: ${ROTATION_SPEED});
+        // console.log(Max rotation: ${MAX_ROTATION});
       }
 
       moveDown();
