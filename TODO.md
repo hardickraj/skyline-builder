@@ -1,6 +1,4 @@
-- start button/ click button
 - add side objects
-- fall if drop outside the canvas
 - lives functionality
 - lives and score UI
 - BGM & SFX

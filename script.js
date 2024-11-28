@@ -140,11 +140,11 @@ k.scene('game', async () => {
 
   // MOVE DOWN METHOD
 
-  function moveDown() {
+  function moveDown(distance = fakeFloor.height) {
     base.wait(0.5, () => {
       base.tween(
         vec2(base.pos.x, base.pos.y),
-        vec2(base.pos.x, base.pos.y + 100),
+        vec2(base.pos.x, base.pos.y + distance),
         0.6,
         (value) => (base.pos = value)
       );
@@ -221,7 +221,7 @@ k.scene('game', async () => {
         // );
         hook.add(fakeFloor);
 
-        k.wait(0.41, () => {
+        k.wait(0.35, () => {
           isHookAnimating = false;
         });
       });
@@ -254,13 +254,12 @@ k.scene('game', async () => {
       ]);
       FLOOR_COUNT++;
       k.debug.log(`Floor count: ${FLOOR_COUNT}`);
+      moveDown(160);
     }
   });
 
   k.onCollide('fake-floor', 'floor', (fakeFloor, floor, col) => {
     const fakeFloorPos = fakeFloor.worldPos();
-    console.log(fakeFloorPos);
-
     const attachmentPos = col.target.pos.x - fakeFloorPos.x;
 
     floor.destroy();
@@ -270,7 +269,6 @@ k.scene('game', async () => {
       fakeFloorPos.x > 0 &&
       fakeFloorPos.x < canvasWidth
     ) {
-      console.log(fakeFloorPos);
       const newFloor = fakeFloor.add([
         k.sprite(floor.sprite),
         k.pos(attachmentPos, -fakeFloor.height),
@@ -305,7 +303,7 @@ k.scene('game', async () => {
 
       moveDown();
       k.wait(1.25, () => {
-        if (!isFirstFloor) updateBackground();
+        updateBackground();
       });
       return;
     }
