@@ -89,12 +89,12 @@ k.scene('game', async () => {
     k.z(50),
   ]);
 
-  const floorBoard = k.add([k.sprite('floorBox'), k.pos(10, 4), k.z(50)]);
+  const floorBoard = k.add([k.sprite('floorBox'), k.pos(10, 24), k.z(50)]);
 
   for (let i = 0; i < LIVES; i++) {
     scoreBoard.add([
       k.sprite('heart'),
-      k.pos(5 + i * 42, scoreBoard.height + 10),
+      k.pos(5 + i * 45, scoreBoard.height + 10),
       k.z(80),
       'heart',
     ]);
@@ -105,7 +105,7 @@ k.scene('game', async () => {
     k.pos(canvasWidth / 2, canvasHeight / 2 + 80),
     k.anchor('center'),
     k.timer(),
-    k.scale(0.9),
+    // k.scale(0.9),
     k.z(50),
   ]);
 
@@ -141,30 +141,30 @@ k.scene('game', async () => {
       });
   };
 
-  const animateStartButton = () => {
-    startButton
-      .tween(
-        startButton.scale,
-        k.vec2(1, 1),
-        1,
-        (value) => (startButton.scale = value),
-        k.easings.easeInOutSine
-      )
-      .onEnd(() => {
-        startButton
-          .tween(
-            startButton.scale,
-            k.vec2(0.9, 0.9),
-            1,
-            (value) => (startButton.scale = value),
-            k.easings.easeInOutSine
-          )
-          .onEnd(() => animateStartButton());
-      });
-  };
+  // const animateStartButton = () => {
+  //   startButton
+  //     .tween(
+  //       startButton.scale,
+  //       k.vec2(1, 1),
+  //       1,
+  //       (value) => (startButton.scale = value),
+  //       k.easings.easeInOutSine
+  //     )
+  //     .onEnd(() => {
+  //       startButton
+  //         .tween(
+  //           startButton.scale,
+  //           k.vec2(0.9, 0.9),
+  //           1,
+  //           (value) => (startButton.scale = value),
+  //           k.easings.easeInOutSine
+  //         )
+  //         .onEnd(() => animateStartButton());
+  //     });
+  // };
 
   animateArrow();
-  animateStartButton();
+  // animateStartButton();
 
   // ADDING BASE, CRANE-HOOK
   const base = k.add([
