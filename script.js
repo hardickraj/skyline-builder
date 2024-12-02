@@ -1,5 +1,5 @@
 import shiftColor from './utils/shiftColor.js';
-window.scrollTo(0, -50);
+window.scrollTo(0, 0);
 
 const canvas = document.getElementById('kaplay-canvas');
 let isFirstFloor = true;
@@ -40,7 +40,6 @@ k.scene('game', async () => {
   await k.loadFont('bagelFatOne', '/assets/fonts/BagelFatOne.ttf');
 
   await k.loadSound('bgMusic', '/assets/sounds/bg-music.mp3');
-  await k.loadSound('click', '/assets/sounds/click.mp3');
   await k.loadSound('fall', '/assets/sounds/fall.mp3');
   await k.loadSound('perfectScore', '/assets/sounds/perfect-score.mp3');
   await k.loadSound('pop', '/assets/sounds/pop.mp3');
@@ -307,7 +306,7 @@ k.scene('game', async () => {
         k.pos(globalPos.x, globalPos.y),
         k.anchor('top'),
         k.area(),
-        k.offscreen({ hide: true, pause: true }),
+        k.offscreen({ destroy: true, distance: 100 }),
         k.z(10),
         'floor',
       ]);
@@ -316,6 +315,16 @@ k.scene('game', async () => {
 
       floor.onUpdate(() => {
         floor.move(0, 750);
+      });
+
+      floor.onDestroy(() => {
+        console.log('destroyed');
+        if (floor.pos.y > canvasHeight - floor.height) {
+          LIVES--;
+          k.play('thud');
+          k.play('fall');
+          updateHeartsUi();
+        }
       });
     }
 
@@ -435,18 +444,17 @@ k.scene('game', async () => {
     });
     k.play('fall');
     LIVES--;
-    console.log(LIVES);
+
+    updateHeartsUi();
+  });
+
+  const updateHeartsUi = () => {
     if (LIVES <= 0) {
       k.wait(0.5, () => {
         window.location.href = `result.html?score=${SCORE}&floor=${FLOOR_COUNT}`;
         k.quit();
       });
     }
-
-    updateHeartsUi();
-  });
-
-  const updateHeartsUi = () => {
     const totalHearts = k.get('heart');
     totalHearts.forEach((heart, index) => {
       heart.opacity = index < LIVES ? 1 : 0.3;

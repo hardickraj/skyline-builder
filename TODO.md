@@ -1,9 +1,7 @@
-- add side objects
-- lives functionality
-- lives and score UI
-- BGM & SFX
 - Credits Info
 - about this project
 - usage policy & terms
+- add side objects
+- game over sound
+- change web cover image
 - logo
-- change assets
