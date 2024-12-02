@@ -39,6 +39,8 @@ k.scene('game', async () => {
   await k.loadSprite('floorBox', '/assets/images/floor-box.svg');
   await k.loadSprite('arrow', '/assets/images/arrow.png');
 
+  await k.loadFont('bagelFatOne', '/assets/fonts/BagelFatOne.ttf');
+
   k.loadSound('bgMusic', '/assets/sounds/bg-music.mp3');
 
   // CREATING GRADIENT BACKGROUND
@@ -89,7 +91,7 @@ k.scene('game', async () => {
     k.z(50),
   ]);
 
-  const floorBoard = k.add([k.sprite('floorBox'), k.pos(10, 24), k.z(50)]);
+  const floorBoard = k.add([k.sprite('floorBox'), k.pos(10, 20), k.z(50)]);
 
   for (let i = 0; i < LIVES; i++) {
     scoreBoard.add([
@@ -165,6 +167,30 @@ k.scene('game', async () => {
 
   animateArrow();
   // animateStartButton();
+
+  // ADDING SCORES
+
+  const score = scoreBoard.add([
+    k.text(SCORE, {
+      font: 'bagelFatOne',
+      size: 34,
+    }),
+    k.color('#AF2F28'),
+    k.anchor('center'),
+    k.pos(scoreBoard.width / 2, 47),
+    k.z(80),
+  ]);
+
+  const floorsCount = floorBoard.add([
+    k.text(FLOOR_COUNT, {
+      font: 'bagelFatOne',
+      size: 34,
+    }),
+    k.color('#AF2F28'),
+    k.anchor('center'),
+    k.pos(floorBoard.width / 2, 32),
+    k.z(80),
+  ]);
 
   // ADDING BASE, CRANE-HOOK
   const base = k.add([
@@ -247,8 +273,10 @@ k.scene('game', async () => {
       if (startButton.parent) startButton.destroy();
       if (arrow.parent) arrow.destroy();
       k.play('bgMusic', {
-        volume: 0.3,
+        volume: 0.4,
         loop: true,
+        speed: 1,
+        detune: 100,
       });
       animateHook();
     }
@@ -326,7 +354,9 @@ k.scene('game', async () => {
         'fake-floor',
       ]);
       FLOOR_COUNT++;
-      k.debug.log(`Floor count: ${FLOOR_COUNT}`);
+      SCORE += 25;
+      floorsCount.text = FLOOR_COUNT;
+      score.text = SCORE;
       moveDown(160);
     }
   });
@@ -361,23 +391,17 @@ k.scene('game', async () => {
       }
 
       FLOOR_COUNT++;
-      k.debug.log(`Floor count: ${FLOOR_COUNT}`);
-      k.debug.log(`Score: ${SCORE}`);
+      score.text = SCORE;
+      floorsCount.text = FLOOR_COUNT;
 
       // INCREASING GAME SPEED
       if (FLOOR_COUNT % 4 === 3) {
         ROTATION_SPEED += 0.3;
         MAX_ROTATION = ROTATION_SPEED * 45;
         GAME_SPEED = ROTATION_SPEED * 220;
-        // console.log(game speed: ${GAME_SPEED});
-        // console.log(rotation speed: ${ROTATION_SPEED});
-        // console.log(Max rotation: ${MAX_ROTATION});
       }
 
       moveDown();
-      // k.wait(1, () => {
-      //   updateBackground();
-      // });
       return;
     }
 
