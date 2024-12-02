@@ -17,8 +17,6 @@ const k = kaplay({
   focus: false,
 });
 
-// k.setGravity(1400);
-
 const canvasWidth = k.width();
 const canvasHeight = k.height();
 
@@ -98,14 +96,19 @@ k.scene('game', async () => {
 
   const floorBoard = k.add([k.sprite('floorBox'), k.pos(10, 20), k.z(50)]);
 
-  for (let i = 0; i < LIVES; i++) {
-    scoreBoard.add([
-      k.sprite('heart'),
-      k.pos(5 + i * 45, scoreBoard.height + 10),
-      k.z(80),
-      'heart',
-    ]);
-  }
+  const renderHearts = () => {
+    for (let i = 0; i < LIVES; i++) {
+      k.add([
+        k.sprite('heart'),
+        k.pos(scoreBoard.pos.x + 5 + i * 45, scoreBoard.height + 10),
+        k.z(80),
+        k.opacity(1),
+        'heart',
+      ]);
+    }
+  };
+
+  renderHearts();
 
   const startButton = k.add([
     k.sprite('startButton'),
@@ -255,15 +258,15 @@ k.scene('game', async () => {
     let hookDirection = 1;
     hook.onUpdate(() => {
       if (hook.pos.x <= 0 - fakeFloor.width / 2 || hook.angle > MAX_ROTATION)
-        hookDirection = 1; // Checking if the hook reaches the left side
+        hookDirection = 1;
       if (
         hook.pos.x >= canvasWidth + fakeFloor.width / 2 ||
         hook.angle < -MAX_ROTATION
       )
         hookDirection = -1;
 
-      hook.angle += -hookDirection * ROTATION_SPEED; // Rotate the hook
-      hook.move(hookDirection * GAME_SPEED, 0); // Move the hook based on the updated speed
+      hook.angle += -hookDirection * ROTATION_SPEED;
+      hook.move(hookDirection * GAME_SPEED, 0);
     });
   };
 
@@ -412,7 +415,7 @@ k.scene('game', async () => {
       return;
     }
 
-    // CREATING FALLING FLOOR IF OUT OF ATTACHMENT POSITION
+    // FLOOR COLLIDES OUTSIDE ATTACHMENT POSITION
     const fallingFloor = k.add([
       k.sprite(floor.sprite),
       k.pos(col.target.pos.x, col.target.pos.y + floor.height),
@@ -431,7 +434,24 @@ k.scene('game', async () => {
       });
     });
     k.play('fall');
+    LIVES--;
+    console.log(LIVES);
+    if (LIVES <= 0) {
+      k.wait(0.5, () => {
+        window.location.href = `result.html?score=${SCORE}&floor=${FLOOR_COUNT}`;
+        k.quit();
+      });
+    }
+
+    updateHeartsUi();
   });
+
+  const updateHeartsUi = () => {
+    const totalHearts = k.get('heart');
+    totalHearts.forEach((heart, index) => {
+      heart.opacity = index < LIVES ? 1 : 0.3;
+    });
+  };
 });
 
 k.go('game');
