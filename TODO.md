@@ -1,6 +1,4 @@
 - Credits Info
-- about this project
-- usage policy & terms
 - add side objects
 - game over sound
 - change web cover image
