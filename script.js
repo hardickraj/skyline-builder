@@ -41,7 +41,12 @@ k.scene('game', async () => {
 
   await k.loadFont('bagelFatOne', '/assets/fonts/BagelFatOne.ttf');
 
-  k.loadSound('bgMusic', '/assets/sounds/bg-music.mp3');
+  await k.loadSound('bgMusic', '/assets/sounds/bg-music.mp3');
+  await k.loadSound('click', '/assets/sounds/click.mp3');
+  await k.loadSound('fall', '/assets/sounds/fall.mp3');
+  await k.loadSound('perfectScore', '/assets/sounds/perfect-score.mp3');
+  await k.loadSound('pop', '/assets/sounds/pop.mp3');
+  await k.loadSound('thud', '/assets/sounds/thud.mp3');
 
   // CREATING GRADIENT BACKGROUND
 
@@ -384,9 +389,11 @@ k.scene('game', async () => {
 
       // LOGICS IF ATTACHMENT POSITION IS VERY CLOSE
       if (Math.abs(attachmentPos) <= 5) {
+        k.play('perfectScore');
         newFloor.color = k.rgb('#ffd52d');
         SCORE += 25;
       } else {
+        k.play('pop');
         SCORE += 10;
       }
 
@@ -416,13 +423,14 @@ k.scene('game', async () => {
       k.z(10),
       'falling-floor',
     ]);
-
+    k.play('thud');
     fallingFloor.onUpdate(() => {
       fallingFloor.angle += attachmentPos >= 0 ? 3 : -3;
       fallingFloor.wait(0.2, () => {
         fallingFloor.move(0, 750);
       });
     });
+    k.play('fall');
   });
 });
 
