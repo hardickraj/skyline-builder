@@ -1,5 +1,5 @@
-- Credits Info
+- design result page
+- logo
 - add side objects
 - game over sound
-- change web cover image
-- logo
+- unstable tower

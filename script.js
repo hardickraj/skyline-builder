@@ -99,8 +99,9 @@ k.scene('game', async () => {
     for (let i = 0; i < LIVES; i++) {
       k.add([
         k.sprite('heart'),
-        k.pos(scoreBoard.pos.x + 5 + i * 45, scoreBoard.height + 10),
+        k.pos(scoreBoard.pos.x + 6 + i * 46, scoreBoard.height + 14),
         k.z(80),
+        k.scale(0.8),
         k.opacity(1),
         'heart',
       ]);
@@ -232,6 +233,7 @@ k.scene('game', async () => {
     k.pos(0, hook.height),
     k.anchor('top'),
     k.area(),
+    k.scale(1.165),
     k.z(10),
   ]);
 
@@ -239,7 +241,7 @@ k.scene('game', async () => {
 
   // MOVE DOWN METHOD
 
-  function moveDown(distance = fakeFloor.height) {
+  function moveDown(distance = fakeFloor.height * fakeFloor.scale.y) {
     base.wait(0.5, () => {
       base
         .tween(
@@ -280,7 +282,7 @@ k.scene('game', async () => {
       if (startButton.parent) startButton.destroy();
       if (arrow.parent) arrow.destroy();
       k.play('bgMusic', {
-        volume: 0.4,
+        volume: 0.3,
         loop: true,
         speed: 1,
         detune: 100,
@@ -306,6 +308,7 @@ k.scene('game', async () => {
         k.pos(globalPos.x, globalPos.y),
         k.anchor('top'),
         k.area(),
+        k.scale(1.165),
         k.offscreen({ destroy: true, distance: 100 }),
         k.z(10),
         'floor',
@@ -374,7 +377,7 @@ k.scene('game', async () => {
       SCORE += 25;
       floorsCount.text = FLOOR_COUNT;
       score.text = SCORE;
-      moveDown(160);
+      moveDown();
     }
   });
 
@@ -431,6 +434,7 @@ k.scene('game', async () => {
       k.anchor('bot'),
       k.rotate(),
       k.timer(),
+      k.scale(1.165),
       k.offscreen({ destroy: true }),
       k.z(10),
       'falling-floor',
@@ -442,7 +446,9 @@ k.scene('game', async () => {
         fallingFloor.move(0, 750);
       });
     });
-    k.play('fall');
+    k.wait(0.4, () => {
+      k.play('fall');
+    });
     LIVES--;
 
     updateHeartsUi();
@@ -450,7 +456,7 @@ k.scene('game', async () => {
 
   const updateHeartsUi = () => {
     if (LIVES <= 0) {
-      k.wait(0.5, () => {
+      k.wait(0.6, () => {
         window.location.href = `result.html?score=${SCORE}&floor=${FLOOR_COUNT}`;
         k.quit();
       });
