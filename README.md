@@ -41,4 +41,4 @@ Designed and Developed by **[Hardick Raj](https://hardickraj.github.io/portfolio
 
 ## License and Usage
 
-This project comes under _MIT license_
+This project comes under **MIT license**: _(Free to use but credits required)_
