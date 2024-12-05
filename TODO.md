@@ -1,5 +1,6 @@
-- design result page
 - logo
 - add side objects
 - game over sound
 - unstable tower
+- long hook wire
+- change UI

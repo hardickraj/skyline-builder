@@ -93,7 +93,7 @@ k.scene('game', async () => {
     k.z(50),
   ]);
 
-  const floorBoard = k.add([k.sprite('floorBox'), k.pos(10, 20), k.z(50)]);
+  const floorBoard = k.add([k.sprite('floorBox'), k.pos(10, 4), k.z(50)]);
 
   const renderHearts = () => {
     for (let i = 0; i < LIVES; i++) {
@@ -101,7 +101,7 @@ k.scene('game', async () => {
         k.sprite('heart'),
         k.pos(scoreBoard.pos.x + 6 + i * 46, scoreBoard.height + 14),
         k.z(80),
-        k.scale(0.8),
+        k.scale(0.9),
         k.opacity(1),
         'heart',
       ]);
@@ -196,22 +196,20 @@ k.scene('game', async () => {
     }),
     k.color('#AF2F28'),
     k.anchor('center'),
-    k.pos(floorBoard.width / 2, 32),
+    k.pos(floorBoard.width / 2, 40),
     k.z(80),
   ]);
 
   // ADDING BASE, CRANE-HOOK
   const base = k.add([
     k.sprite('base'),
-    k.pos(canvasWidth / 2, canvasHeight),
+    k.pos(canvasWidth / 2, canvasHeight + 50),
     k.anchor('bot'),
-    k.area({ shape: new k.Rect(k.vec2(0, -290), 180, 100) }),
-    k.scale(),
+    k.area({ shape: new k.Rect(k.vec2(0, -230), 180, 100) }),
     k.timer(),
     k.z(10),
     'base',
   ]);
-  base.scaleTo(canvasWidth / base.width);
 
   const hook = k.add([
     k.sprite('hook'),
@@ -233,7 +231,6 @@ k.scene('game', async () => {
     k.pos(0, hook.height),
     k.anchor('top'),
     k.area(),
-    k.scale(1.165),
     k.z(10),
   ]);
 
@@ -241,7 +238,7 @@ k.scene('game', async () => {
 
   // MOVE DOWN METHOD
 
-  function moveDown(distance = fakeFloor.height * fakeFloor.scale.y) {
+  function moveDown(distance = fakeFloor.height) {
     base.wait(0.5, () => {
       base
         .tween(
@@ -282,7 +279,7 @@ k.scene('game', async () => {
       if (startButton.parent) startButton.destroy();
       if (arrow.parent) arrow.destroy();
       k.play('bgMusic', {
-        volume: 0.3,
+        volume: 0.2,
         loop: true,
         speed: 1,
         detune: 100,
@@ -308,7 +305,6 @@ k.scene('game', async () => {
         k.pos(globalPos.x, globalPos.y),
         k.anchor('top'),
         k.area(),
-        k.scale(1.165),
         k.offscreen({ destroy: true, distance: 100 }),
         k.z(10),
         'floor',
@@ -321,7 +317,6 @@ k.scene('game', async () => {
       });
 
       floor.onDestroy(() => {
-        console.log('destroyed');
         if (floor.pos.y > canvasHeight - floor.height) {
           LIVES--;
           k.play('thud');
@@ -361,15 +356,15 @@ k.scene('game', async () => {
   // COLLIDE LOGICS
 
   base.onCollide('floor', (floor) => {
+    
     floor.destroy();
     if (isFirstFloor) {
       isFirstFloor = false;
       base.add([
         k.sprite(floor.sprite),
-        k.pos(0, -390),
+        k.pos(0, -325),
         k.anchor('bot'),
         k.area(),
-        k.scale(1 + canvasWidth / base.width / 2),
         k.z(10),
         'fake-floor',
       ]);
@@ -405,7 +400,7 @@ k.scene('game', async () => {
       // LOGICS IF ATTACHMENT POSITION IS VERY CLOSE
       if (Math.abs(attachmentPos) <= 5) {
         k.play('perfectScore');
-        newFloor.color = k.rgb('#ffd52d');
+        newFloor.color = k.rgb('#fcd34d');
         SCORE += 25;
       } else {
         k.play('pop');
@@ -434,7 +429,6 @@ k.scene('game', async () => {
       k.anchor('bot'),
       k.rotate(),
       k.timer(),
-      k.scale(1.165),
       k.offscreen({ destroy: true }),
       k.z(10),
       'falling-floor',
