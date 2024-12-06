@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./style.css" />
+    <link
+      rel="shortcut icon"
+      href="/assets/images/favicon.ico"
+      type="image/x-icon"
+    />
     <title>Skyline Builder - The tower stack game</title>
   </head>
 
@@ -93,6 +98,24 @@
         </div>
 
         <canvas id="kaplay-canvas"></canvas>
+
+        <div class="scoreboard">
+          <div class="floors">
+            <span id="floor-number">0</span>
+            <span id="floor-score-text">Floor</span>
+          </div>
+
+          <div>
+            <div id="score">
+              <span id="score-number">000</span>
+              <img src="/assets/images/star.svg" alt="star icon" />
+            </div>
+
+            <div id="hearts-container">
+                <img src="/assets/images/heart.svg" alt="">
+            </div>
+          </div>
+        </div>
       </main>
     </div>
 

@@ -87,24 +87,14 @@ k.scene('game', async () => {
 
   // ADDING HUD
 
-  const scoreBoard = k.add([
-    k.sprite('scoreBox'),
-    k.pos(canvasWidth - 140, 4),
-    k.z(50),
-  ]);
-
-  const floorBoard = k.add([k.sprite('floorBox'), k.pos(10, 4), k.z(50)]);
-
   const renderHearts = () => {
+    const container = document.getElementById('hearts-container');
+    container.innerHTML = '';
     for (let i = 0; i < LIVES; i++) {
-      k.add([
-        k.sprite('heart'),
-        k.pos(scoreBoard.pos.x + 6 + i * 46, scoreBoard.height + 14),
-        k.z(80),
-        k.scale(0.9),
-        k.opacity(1),
-        'heart',
-      ]);
+      const heart = document.createElement('img');
+      heart.src = '/assets/images/heart.svg';
+      heart.className = 'heart';
+      container.appendChild(heart);
     }
   };
 
@@ -175,30 +165,6 @@ k.scene('game', async () => {
 
   animateArrow();
   // animateStartButton();
-
-  // ADDING SCORES
-
-  const score = scoreBoard.add([
-    k.text(SCORE, {
-      font: 'bagelFatOne',
-      size: 34,
-    }),
-    k.color('#AF2F28'),
-    k.anchor('center'),
-    k.pos(scoreBoard.width / 2, 47),
-    k.z(80),
-  ]);
-
-  const floorsCount = floorBoard.add([
-    k.text(FLOOR_COUNT, {
-      font: 'bagelFatOne',
-      size: 34,
-    }),
-    k.color('#AF2F28'),
-    k.anchor('center'),
-    k.pos(floorBoard.width / 2, 40),
-    k.z(80),
-  ]);
 
   // ADDING BASE, CRANE-HOOK
   const base = k.add([
@@ -356,7 +322,6 @@ k.scene('game', async () => {
   // COLLIDE LOGICS
 
   base.onCollide('floor', (floor) => {
-    
     floor.destroy();
     if (isFirstFloor) {
       isFirstFloor = false;
@@ -370,8 +335,8 @@ k.scene('game', async () => {
       ]);
       FLOOR_COUNT++;
       SCORE += 25;
-      floorsCount.text = FLOOR_COUNT;
-      score.text = SCORE;
+      document.getElementById('floor-number').textContent = FLOOR_COUNT;
+      document.getElementById('score-number').textContent = SCORE;
       moveDown();
     }
   });
@@ -408,11 +373,13 @@ k.scene('game', async () => {
       }
 
       FLOOR_COUNT++;
-      score.text = SCORE;
-      floorsCount.text = FLOOR_COUNT;
+      document.getElementById('floor-number').textContent = FLOOR_COUNT;
+      document.getElementById('score-number').textContent = SCORE;
+      document.getElementById('floor-score-text').textContent =
+        FLOOR_COUNT > 1 ? 'Floors' : 'Floor';
 
       // INCREASING GAME SPEED
-      if (FLOOR_COUNT % 4 === 3) {
+      if (FLOOR_COUNT % 2 === 1) {
         ROTATION_SPEED += 0.3;
         MAX_ROTATION = ROTATION_SPEED * 45;
         GAME_SPEED = ROTATION_SPEED * 220;
@@ -450,14 +417,14 @@ k.scene('game', async () => {
 
   const updateHeartsUi = () => {
     if (LIVES <= 0) {
-      k.wait(0.6, () => {
+      k.wait(1, () => {
         window.location.href = `result.html?score=${SCORE}&floor=${FLOOR_COUNT}`;
         k.quit();
       });
     }
-    const totalHearts = k.get('heart');
+    const totalHearts = document.querySelectorAll('.heart');
     totalHearts.forEach((heart, index) => {
-      heart.opacity = index < LIVES ? 1 : 0.3;
+      heart.style.opacity = index < LIVES ? 1 : 0.3;
     });
   };
 });
