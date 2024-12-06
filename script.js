@@ -191,8 +191,9 @@ k.scene('game', async () => {
 
   // adding floor to hook
   let floorNumber = 1;
+  let fakeFloor;
 
-  const fakeFloor = k.make([
+  fakeFloor = k.make([
     k.sprite(`floor${floorNumber}`),
     k.pos(0, hook.height),
     k.anchor('top'),
@@ -271,7 +272,7 @@ k.scene('game', async () => {
         k.pos(globalPos.x, globalPos.y),
         k.anchor('top'),
         k.area(),
-        k.offscreen({ destroy: true, distance: 100 }),
+        k.offscreen({ destroy: true, distance: 1 }),
         k.z(10),
         'floor',
       ]);
@@ -301,6 +302,13 @@ k.scene('game', async () => {
         //   0.4,
         //   (value) => (hook.pos = value)
         // );
+        fakeFloor = k.make([
+          k.sprite(`floor${floorNumber}`),
+          k.pos(0, hook.height),
+          k.anchor('top'),
+          k.area(),
+          k.z(10),
+        ]);
         hook.add(fakeFloor);
 
         k.wait(0.35, () => {
