@@ -21,29 +21,29 @@ const canvasWidth = k.width();
 const canvasHeight = k.height();
 
 k.scene('game', async () => {
-  await k.loadSprite('balloon1', '/assets/images/balloon-1.svg');
-  await k.loadSprite('balloon2', '/assets/images/balloon-2.svg');
-  await k.loadSprite('airplane1', '/assets/images/airplane-1.svg');
-  await k.loadSprite('airplane2', '/assets/images/airplane-2.svg');
-  await k.loadSprite('birds1', '/assets/images/birds-1.svg');
-  await k.loadSprite('birds2', '/assets/images/birds-2.svg');
-  await k.loadSprite('base', '/assets/images/base-0.png');
-  await k.loadSprite('floor1', '/assets/images/floor-1.png');
-  await k.loadSprite('floor2', '/assets/images/floor-2.png');
-  await k.loadSprite('hook', '/assets/images/hook.png');
-  await k.loadSprite('startButton', '/assets/images/click-button.svg');
-  await k.loadSprite('heart', '/assets/images/heart.svg');
-  await k.loadSprite('scoreBox', '/assets/images/score-box.svg');
-  await k.loadSprite('floorBox', '/assets/images/floor-box.svg');
-  await k.loadSprite('arrow', '/assets/images/arrow.png');
+  await k.loadSprite('balloon1', './assets/images/balloon-1.svg');
+  await k.loadSprite('balloon2', './assets/images/balloon-2.svg');
+  await k.loadSprite('airplane1', './assets/images/airplane-1.svg');
+  await k.loadSprite('airplane2', './assets/images/airplane-2.svg');
+  await k.loadSprite('birds1', './assets/images/birds-1.svg');
+  await k.loadSprite('birds2', './assets/images/birds-2.svg');
+  await k.loadSprite('base', './assets/images/base-0.png');
+  await k.loadSprite('floor1', './assets/images/floor-1.png');
+  await k.loadSprite('floor2', './assets/images/floor-2.png');
+  await k.loadSprite('hook', './assets/images/hook.png');
+  await k.loadSprite('startButton', './assets/images/click-button.svg');
+  await k.loadSprite('heart', './assets/images/heart.svg');
+  await k.loadSprite('scoreBox', './assets/images/score-box.svg');
+  await k.loadSprite('floorBox', './assets/images/floor-box.svg');
+  await k.loadSprite('arrow', './assets/images/arrow.png');
 
-  await k.loadFont('bagelFatOne', '/assets/fonts/BagelFatOne.ttf');
+  await k.loadFont('bagelFatOne', './assets/fonts/BagelFatOne.ttf');
 
-  await k.loadSound('bgMusic', '/assets/sounds/bg-music.mp3');
-  await k.loadSound('fall', '/assets/sounds/fall.mp3');
-  await k.loadSound('perfectScore', '/assets/sounds/perfect-score.mp3');
-  await k.loadSound('pop', '/assets/sounds/pop.mp3');
-  await k.loadSound('thud', '/assets/sounds/thud.mp3');
+  await k.loadSound('bgMusic', './assets/sounds/bg-music.mp3');
+  await k.loadSound('fall', './assets/sounds/fall.mp3');
+  await k.loadSound('perfectScore', './assets/sounds/perfect-score.mp3');
+  await k.loadSound('pop', './assets/sounds/pop.mp3');
+  await k.loadSound('thud', './assets/sounds/thud.mp3');
 
   // CREATING GRADIENT BACKGROUND
 
@@ -92,7 +92,7 @@ k.scene('game', async () => {
     container.innerHTML = '';
     for (let i = 0; i < LIVES; i++) {
       const heart = document.createElement('img');
-      heart.src = '/assets/images/heart.svg';
+      heart.src = './assets/images/heart.svg';
       heart.className = 'heart';
       container.appendChild(heart);
     }
