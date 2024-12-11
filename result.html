@@ -31,7 +31,7 @@
               <p id="total-score">000</p>
             </div>
 
-            <a href="/" class="play-again-btn">
+            <a href="./" class="play-again-btn">
               <img
                 src="./assets/images/play-again-button.svg"
                 alt="play again"
@@ -90,7 +90,7 @@
       const floor = parseInt(urlParams.get('floor'), 10);
 
       if (isNaN(score) || isNaN(floor)) {
-        window.location.replace('index.html');
+        window.location.replace('./');
       }
 
       document.getElementById('total-floors').textContent = floor;
