@@ -11,7 +11,7 @@ let SCORE = 0;
 let LIVES = 3;
 const k = kaplay({
   canvas: canvas,
-  // debug: false
+  debug: false,
   background: [250, 250, 250],
   backgroundAudio: true,
   focus: false,
@@ -32,9 +32,6 @@ k.scene('game', async () => {
   await k.loadSprite('floor2', './assets/images/floor-2.png');
   await k.loadSprite('hook', './assets/images/hook.png');
   await k.loadSprite('startButton', './assets/images/click-button.svg');
-  await k.loadSprite('heart', './assets/images/heart.svg');
-  await k.loadSprite('scoreBox', './assets/images/score-box.svg');
-  await k.loadSprite('floorBox', './assets/images/floor-box.svg');
   await k.loadSprite('arrow', './assets/images/arrow.png');
 
   await k.loadFont('bagelFatOne', './assets/fonts/BagelFatOne.ttf');
@@ -272,7 +269,7 @@ k.scene('game', async () => {
         k.pos(globalPos.x, globalPos.y),
         k.anchor('top'),
         k.area(),
-        k.offscreen({ destroy: true, distance: 1 }),
+        k.offscreen({ destroy: true, distance: 100 }),
         k.z(10),
         'floor',
       ]);

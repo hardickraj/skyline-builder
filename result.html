@@ -90,7 +90,7 @@
       const floor = parseInt(urlParams.get('floor'), 10);
 
       if (isNaN(score) || isNaN(floor)) {
-        window.location.replace('/');
+        window.location.replace('./');
       }
 
       document.getElementById('total-floors').textContent = floor;
